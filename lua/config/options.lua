@@ -4,3 +4,9 @@
 vim.opt.number = true
 vim.opt.relativenumber = false
 vim.opt.conceallevel = 0
+vim.opt.list = true
+vim.opt.listchars = {
+  trail = "·",
+  nbsp = "␣",
+  tab = "»·",
+}
