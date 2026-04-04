@@ -3,23 +3,27 @@
 -- Add any additional keymaps here
 vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename symbol" })
 
--- F5: build dotnet then run Godot (in a terminal)
 vim.keymap.set("n", "<F5>", function()
-  -- Adjust these:
-  local dotnet_cmd = "dotnet build"
-  local godot_cmd = [[godot --path .]] -- or your full path to Godot.exe
-
-  -- Use a login shell so PATH works (esp. on Windows/Git Bash setups)
-  local cmd = dotnet_cmd .. " && " .. godot_cmd
-
-  -- LazyVim ships Snacks.terminal (newer) and often ToggleTerm too.
-  -- Try Snacks first.
-  local ok, snacks = pcall(require, "snacks")
-  if ok and snacks.terminal then
-    snacks.terminal.open(cmd, { title = "F5: build + run", focus = true })
-    return
+  local build = vim.fn.findfile("build.sh", ".;")
+  if build ~= "" then
+    vim.cmd("split | terminal bash " .. build)
+  else
+    vim.notify("No build.sh found in project", vim.log.levels.WARN)
   end
+end, { desc = "Build project" })
 
-  -- Fallback: built-in terminal split
-  vim.cmd("botright split | resize 15 | terminal " .. cmd)
-end, { desc = "Build (dotnet) + Run (Godot)" })
+vim.keymap.set("n", "<F9>", function()
+  require("dap").toggle_breakpoint()
+end, { desc = "Toggle breakpoint" })
+vim.keymap.set("n", "<F10>", function()
+  require("dap").step_over()
+end, { desc = "Step over" })
+vim.keymap.set("n", "<F11>", function()
+  require("dap").step_into()
+end, { desc = "Step into" })
+vim.keymap.set("n", "<F12>", function()
+  require("dap").continue()
+end, { desc = "Continue" })
+vim.keymap.set("n", "<F8>", function()
+  require("dap").terminate()
+end, { desc = "Stop debugger" })
